@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entregas Curso BioPython</title>
+    <style>
+        /* === ESTILOS GENERALES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* === ENCABEZADO === */
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .header h2 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: #a8c9ff;
+            font-style: italic;
+        }
+
+        /* === CONTENEDOR PRINCIPAL (MENÚ + CONTENIDO) === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* === MENÚ LATERAL IZQUIERDO === */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            overflow-y: auto;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar li {
+            padding: 15px 25px;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar li i {
+            font-style: normal;
+            font-size: 1.2rem;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .sidebar li:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: #ffd700;
+        }
+
+        .sidebar li.active {
+            background-color: rgba(0,0,0,0.3);
+            border-left-color: #ffd700;
+            font-weight: 500;
+        }
+
+        /* === ÁREA DE CONTENIDO DERECHO === */
+        .content {
+            flex: 1;
+            padding: 30px;
+            background-color: #f5f7fa;
+            overflow-y: auto;
+        }
+
+        .tab-pane {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* === ESTILOS PARA EL CUADRO DE COMANDOS === */
+        .command-box {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            padding: 25px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .command-box h3 {
+            font-size: 1.6rem;
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-weight: 400;
+            border-bottom: 2px solid #2a5298;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .command-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .command-item {
+            background-color: #f8fafd;
+            border: 1px solid #dde4ec;
+            border-radius: 8px;
+            padding: 15px 10px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #1e3c72;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .command-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(42, 82, 152, 0.15);
+            border-color: #2a5298;
+            background-color: #ebf5ff;
+        }
+
+        .command-item.special {
+            background-color: #e8f0fe;
+            border-left: 4px solid #2a5298;
+        }
+
+        .note {
+            margin-top: 20px;
+            color: #5f6b7a;
+            font-size: 0.95rem;
+            background-color: #f0f4f9;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #f39c12;
+        }
+
+        .note code {
+            background-color: #e1e8ed;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #c0392b;
+        }
+
+        /* === ESTILOS PARA LAS TARJETAS DE ARTÍCULOS === */
+        .articles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .article-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid #e1e8ed;
+        }
+
+        .article-header {
+            background: linear-gradient(135deg, #f8fafd 0%, #ebf5ff 100%);
+            padding: 25px;
+            border-bottom: 2px solid #2a5298;
+        }
+
+        .article-header h4 {
+            font-size: 1.8rem;
+            color: #1e3c72;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .article-header h4 i {
+            font-style: normal;
+            font-size: 2rem;
+        }
+
+        .article-summary {
+            color: #2c3e50;
+            line-height: 1.6;
+            font-size: 1rem;
+            padding: 15px 25px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .pdf-section {
+            padding: 25px;
+        }
+
+        .pdf-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .view-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(42, 82, 152, 0.3);
+        }
+
+        .view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(42, 82, 152, 0.4);
+        }
+
+        .view-btn.active {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 30px;
+            background: white;
+            color: #1e3c72;
+            border: 2px solid #1e3c72;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            background: #1e3c72;
+            color: white;
+        }
+
+        .pdf-container {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            background: #f8fafd;
+            display: none;
+        }
+
+        .pdf-container.show {
+            display: block;
+        }
+
+        .pdf-viewer {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        .pdf-placeholder {
+            padding: 60px;
+            text-align: center;
+            color: #5f6b7a;
+            background: linear-gradient(135deg, #f8fafd 0%, #ebf5ff 100%);
+            border: 2px dashed #2a5298;
+            border-radius: 12px;
+            font-size: 1.1rem;
+        }
+
+        .pdf-placeholder i {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 15px;
+            color: #2a5298;
+        }
+
+        .delivery-date {
+            display: inline-block;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 8px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(42, 82, 152, 0.3);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 700px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                box-shadow: none;
+            }
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                padding: 10px;
+            }
+            .sidebar li {
+                flex: 1 0 auto;
+                justify-content: center;
+            }
+            .pdf-viewer {
+                height: 400px;
+            }
+            .article-header h4 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>entregas curso de programación BioPython</h1>
+        <h2>Karen Dayana Ramirez</h2>
+    </div>
+
+    <div class="main-container">
+        <!-- Menú lateral izquierdo -->
+        <div class="sidebar">
+            <ul>
+                <li data-tab="tab1">
+                    <i>📘</i> clase 9
+                </li>
+                <li data-tab="tab2">
+                    <i>📗</i> clase 10 (próximamente)
+                </li>
+                <li data-tab="tab3">
+                    <i>📙</i> proyecto final
+                </li>
+                <li data-tab="tab4" class="active">
+                    <i>📅</i> Viernes 27 Feb 2026
+                </li>
+            </ul>
+        </div>
+
+        <!-- Área de contenido derecho -->
+        <div class="content">
+            <!-- Pestaña 1: clase 9 -->
+            <div id="tab1" class="tab-pane">
+                <div class="command-box">
+                    <h3>📋 Comandos hasta la fecha - Clase 9</h3>
+                    <div class="command-grid">
+                        <div class="command-item">print( )</div>
+                        <div class="command-item">print(f" ")</div>
+                        <div class="command-item">input( )</div>
+                        <div class="command-item">float( )</div>
+                        <div class="command-item">int( )</div>
+                        <div class="command-item">array( )</div>
+                        <div class="command-item">numpy</div>
+                        <div class="command-item">math</div>
+                        <div class="command-item">import</div>
+                        <div class="command-item">for</div>
+                        <div class="command-item">print(.)</div>
+                        <div class="command-item">print(f".")</div>
+                        <div class="command-item">input(.)</div>
+                        <div class="command-item">float(.)</div>
+                        <div class="command-item">int(.)</div>
+                        <div class="command-item">array(.)</div>
+                        <div class="command-item special">numpy (librería)</div>
+                        <div class="command-item special">math (módulo)</div>
+                        <div class="command-item special">import</div>
+                        <div class="command-item special">for (bucle)</div>
+                    </div>
+                    <div class="note">
+                        <strong>Nota:</strong> Los comandos con <code>.</code> indican marcador de posición (ej: <code>print(objeto)</code>). 
+                        Se han listado tanto con punto como sin punto para reforzar la sintaxis vista en clase. 
+                        La librería <strong>numpy</strong> y <strong>math</strong> requieren ser importadas con <strong>import</strong>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña 2: clase 10 (placeholder) -->
+            <div id="tab2" class="tab-pane">
+                <div class="command-box">
+                    <h3>📚 Clase 10 - Próximamente</h3>
+                    <p style="margin: 20px 0; font-size: 1.1rem;">Contenido en desarrollo para la siguiente clase.</p>
+                    <div class="note">
+                        <strong>BioPython:</strong> Módulos para biología computacional.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña 3: proyecto final (placeholder) -->
+            <div id="tab3" class="tab-pane">
+                <div class="command-box">
+                    <h3>🧬 Proyecto Final</h3>
+                    <p style="margin: 20px 0; font-size: 1.1rem;">Espacio reservado para la entrega del proyecto final.</p>
+                    <div class="note">
+                        Fecha límite: por definir.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña 4: Viernes 27 Feb 2026 - Entrega de PDFs -->
+            <div id="tab4" class="tab-pane active">
+                <div class="command-box">
+                    <div class="delivery-date">📅 Viernes 27 de Febrero de 2026</div>
+                    <h3>📚 Artículos Académicos</h3>
+                    
+                    <div class="articles-container">
+                        <!-- Artículo 1: Condicionales en Python -->
+                        <div class="article-card">
+                            <div class="article-header">
+                                <h4>
+                                    <i>🐍</i> Condicionales en Python
+                                </h4>
+                                <div class="article-summary">
+                                    <strong>Resumen:</strong> Los condicionales son estructuras fundamentales en Python que permiten controlar el flujo de ejecución de un programa. Este artículo presenta una revisión completa de if, if-else, if-elif-else, operador ternario, match-case (Python 3.10+), y más. Incluye ejemplos prácticos, consideraciones de estilo PEP 8 y casos de uso avanzados con expresiones regulares y comprensión de listas.
+                                </div>
+                            </div>
+                            <div class="pdf-section">
+                                <div class="pdf-controls">
+                                    <button class="view-btn" onclick="togglePDF('pdf1')" id="btn-pdf1">
+                                        <span>👁️</span> Ver en pantalla completa
+                                    </button>
+                                    <a href="#" class="download-btn" onclick="downloadPDF('condicionales'); return false;">
+                                        <span>📥</span> Descargar PDF
+                                    </a>
+                                </div>
+                                <div id="pdf1" class="pdf-container">
+                                    <div class="pdf-placeholder">
+                                        <i>📄</i>
+                                        <p>Vista previa del PDF: "Condicionales en Python"</p>
+                                        <p style="font-size: 0.9rem; margin-top: 10px;">En un entorno real, aquí se cargaría el archivo PDF usando la etiqueta &lt;embed&gt; o &lt;iframe&gt;.</p>
+                                        <p style="font-size: 0.9rem; color: #2a5298;">Ejemplo de cómo se vería el visor integrado:</p>
+                                        <div style="background: white; border-radius: 8px; padding: 20px; margin-top: 20px; text-align: left; font-family: monospace; max-width: 600px; margin: 20px auto;">
+                                            <pre style="color: #1e3c72;">
+--- Página 1 del PDF ---
+# Condicionales en Python
+## Estructuras de control para la toma de decisiones
+
+1. if simple
+2. if-else
+3. if-elif-else
+4. Operador ternario
+5. match-case
+6. Ejemplos prácticos
+                            </pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Artículo 2: Método de Po-Shen Loh -->
+                        <div class="article-card">
+                            <div class="article-header">
+                                <h4>
+                                    <i>📐</i> Método de Po-Shen Loh para Ecuaciones Cuadráticas
+                                </h4>
+                                <div class="article-summary">
+                                    <strong>Resumen:</strong> En 2019, el matemático Po-Shen Loh descubrió un método novedoso para resolver ecuaciones cuadráticas que había pasado desapercibido durante más de 4000 años. Este enfoque simplifica drásticamente el proceso al evitar la memorización de la fórmula cuadrática y eliminar la adivinación en la factorización, basándose en la simetría y el promedio de las raíces.
+                                </div>
+                            </div>
+                            <div class="pdf-section">
+                                <div class="pdf-controls">
+                                    <button class="view-btn" onclick="togglePDF('pdf2')" id="btn-pdf2">
+                                        <span>👁️</span> Ver en pantalla completa
+                                    </button>
+                                    <a href="#" class="download-btn" onclick="downloadPDF('poshenloh'); return false;">
+                                        <span>📥</span> Descargar PDF
+                                    </a>
+                                </div>
+                                <div id="pdf2" class="pdf-container">
+                                    <div class="pdf-placeholder">
+                                        <i>📄</i>
+                                        <p>Vista previa del PDF: "Método de Po-Shen Loh"</p>
+                                        <p style="font-size: 0.9rem; margin-top: 10px;">En un entorno real, aquí se cargaría el archivo PDF usando la etiqueta &lt;embed&gt; o &lt;iframe&gt;.</p>
+                                        <p style="font-size: 0.9rem; color: #2a5298;">Ejemplo de cómo se vería el visor integrado:</p>
+                                        <div style="background: white; border-radius: 8px; padding: 20px; margin-top: 20px; text-align: left; font-family: monospace; max-width: 600px; margin: 20px auto;">
+                                            <pre style="color: #1e3c72;">
+--- Página 1 del PDF ---
+# El Método de Po-Shen Loh
+## Una nueva forma de resolver ecuaciones cuadráticas
+
+Para ax² + bx + c = 0:
+1. Promedio = -b/(2a)
+2. Raíces = promedio ± u
+3. u² = (b/(2a))² - c/a
+4. Soluciones: x = -b/(2a) ± √((b/(2a))² - c/a)
+                            </pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="note" style="margin-top: 30px;">
+                        <strong>Nota:</strong> Los visores de PDF están configurados en modo demostración. Para una implementación real, se deben reemplazar los placeholders con la etiqueta <code>&lt;embed src="ruta/del/archivo.pdf" type="application/pdf"&gt;</code> o <code>&lt;iframe src="ruta/del/archivo.pdf"&gt;</code> apuntando a las ubicaciones reales de los archivos.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para cambiar entre pestañas
+        (function() {
+            const menuItems = document.querySelectorAll('.sidebar li');
+            const panes = document.querySelectorAll('.tab-pane');
+
+            function activateTab(tabId) {
+                panes.forEach(pane => pane.classList.remove('active'));
+                menuItems.forEach(item => item.classList.remove('active'));
+
+                const activePane = document.getElementById(tabId);
+                if (activePane) activePane.classList.add('active');
+
+                const activeMenuItem = Array.from(menuItems).find(
+                    item => item.getAttribute('data-tab') === tabId
+                );
+                if (activeMenuItem) activeMenuItem.classList.add('active');
+            }
+
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    const tabId = this.getAttribute('data-tab');
+                    if (tabId) activateTab(tabId);
+                });
+            });
+
+            const defaultActive = document.querySelector('.sidebar li.active');
+            if (defaultActive) {
+                const tabId = defaultActive.getAttribute('data-tab');
+                if (tabId) activateTab(tabId);
+            }
+        })();
+
+        // Función para mostrar/ocultar el visor de PDF
+        function togglePDF(pdfId) {
+            const pdfContainer = document.getElementById(pdfId);
+            const btn = document.getElementById(`btn-${pdfId}`);
+            
+            if (pdfContainer.classList.contains('show')) {
+                pdfContainer.classList.remove('show');
+                btn.innerHTML = '<span>👁️</span> Ver en pantalla completa';
+            } else {
+                // Cerrar otros visores abiertos
+                document.querySelectorAll('.pdf-container').forEach(container => {
+                    container.classList.remove('show');
+                });
+                document.querySelectorAll('.view-btn').forEach(button => {
+                    button.innerHTML = '<span>👁️</span> Ver en pantalla completa';
+                });
+                
+                pdfContainer.classList.add('show');
+                btn.innerHTML = '<span>👁️</span> Ocultar visor';
+            }
+        }
+
+        // Función para simular descarga de PDF
+        function downloadPDF(type) {
+            let filename = '';
+            if (type === 'condicionales') {
+                filename = 'Condicionales_en_Python.pdf';
+            } else if (type === 'poshenloh') {
+                filename = 'Metodo_Po_Shen_Loh.pdf';
+            }
+            
+            alert(`Iniciando descarga de: ${filename}\n\nEn un entorno real, el archivo se descargaría automáticamente.`);
+            
+            // Código real para descarga (comentado)
+            // const link = document.createElement('a');
+            // link.href = `ruta/a/${filename}`;
+            // link.download = filename;
+            // document.body.appendChild(link);
+            // link.click();
+            // document.body.removeChild(link);
+        }
+    </script>
+
+    <noscript>
+        <style>.tab-pane { display: block !important; }</style>
+    </noscript>
+</body>
+</html>

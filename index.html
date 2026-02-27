@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entregas Curso BioPython</title>
+    <style>
+        /* === ESTILOS GENERALES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* === ENCABEZADO === */
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #1e2a36);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .header h2 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: #a8c9ff;
+            font-style: italic;
+        }
+
+        /* === CONTENEDOR PRINCIPAL (MENÚ + CONTENIDO) === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* === MENÚ LATERAL IZQUIERDO === */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            overflow-y: auto;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar li {
+            padding: 15px 25px;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar li i {
+            font-style: normal;
+            font-size: 1.2rem;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .sidebar li:hover {
+            background-color: #34495e;
+            border-left-color: #3498db;
+        }
+
+        .sidebar li.active {
+            background-color: #1e2a36;
+            border-left-color: #3498db;
+            font-weight: 500;
+        }
+
+        /* === ÁREA DE CONTENIDO DERECHO === */
+        .content {
+            flex: 1;
+            padding: 30px;
+            background-color: #f5f7fa;
+            overflow-y: auto;
+        }
+
+        .tab-pane {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* === ESTILOS PARA EL CUADRO DE COMANDOS === */
+        .command-box {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            padding: 25px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .command-box h3 {
+            font-size: 1.6rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 400;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .command-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .command-item {
+            background-color: #f8fafd;
+            border: 1px solid #dde4ec;
+            border-radius: 8px;
+            padding: 15px 10px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #1e2a36;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .command-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.15);
+            border-color: #3498db;
+            background-color: #ebf5ff;
+        }
+
+        .command-item.special {
+            background-color: #e8f0fe;
+            border-left: 4px solid #3498db;
+        }
+
+        .note {
+            margin-top: 20px;
+            color: #5f6b7a;
+            font-size: 0.95rem;
+            background-color: #f0f4f9;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #f39c12;
+        }
+
+        .note code {
+            background-color: #e1e8ed;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #c0392b;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 700px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                box-shadow: none;
+            }
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                padding: 10px;
+            }
+            .sidebar li {
+                flex: 1 0 auto;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>entregas curso de programación BioPython</h1>
+        <h2>Karen Dayana Ramirez</h2>
+    </div>
+
+    <div class="main-container">
+        <!-- Menú lateral izquierdo -->
+        <div class="sidebar">
+            <ul>
+                <li class="active" data-tab="tab1">
+                    <i>📘</i> clase 9
+                </li>
+                <!-- Podemos añadir más pestañas en el futuro -->
+                <li data-tab="tab2">
+                    <i>📗</i> clase 10 (próximamente)
+                </li>
+                <li data-tab="tab3">
+                    <i>📙</i> proyecto final
+                </li>
+            </ul>
+        </div>
+
+        <!-- Área de contenido derecho -->
+        <div class="content">
+            <!-- Pestaña 1: clase 9 (activa por defecto) -->
+            <div id="tab1" class="tab-pane active">
+                <div class="command-box">
+                    <h3>📋 Comandos hasta la fecha - Clase 9</h3>
+                    <div class="command-grid">
+                        <div class="command-item">print( )</div>
+                        <div class="command-item">print(f" ")</div>
+                        <div class="command-item">input( )</div>
+                        <div class="command-item">float( )</div>
+                        <div class="command-item">int( )</div>
+                        <div class="command-item">array( )</div>
+                        <div class="command-item">numpy</div>
+                        <div class="command-item">math</div>
+                        <div class="command-item">import</div>
+                        <div class="command-item">for</div>
+                        <!-- Versiones con punto y sin punto, como en el enunciado -->
+                        <div class="command-item">print(.)</div>
+                        <div class="command-item">print(f".")</div>
+                        <div class="command-item">input(.)</div>
+                        <div class="command-item">float(.)</div>
+                        <div class="command-item">int(.)</div>
+                        <div class="command-item">array(.)</div>
+                        <div class="command-item special">numpy (librería)</div>
+                        <div class="command-item special">math (módulo)</div>
+                        <div class="command-item special">import</div>
+                        <div class="command-item special">for (bucle)</div>
+                    </div>
+                    <div class="note">
+                        <strong>Nota:</strong> Los comandos con <code>.</code> indican marcador de posición (ej: <code>print(objeto)</code>). 
+                        Se han listado tanto con punto como sin punto para reforzar la sintaxis vista en clase. 
+                        La librería <strong>numpy</strong> y <strong>math</strong> requieren ser importadas con <strong>import</strong>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña 2: clase 10 (placeholder) -->
+            <div id="tab2" class="tab-pane">
+                <div class="command-box">
+                    <h3>📚 Clase 10 - Próximamente</h3>
+                    <p style="margin: 20px 0; font-size: 1.1rem;">Contenido en desarrollo para la siguiente clase.</p>
+                    <div class="note">
+                        <strong>BioPython:</strong> Módulos para biología computacional.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña 3: proyecto final (placeholder) -->
+            <div id="tab3" class="tab-pane">
+                <div class="command-box">
+                    <h3>🧬 Proyecto Final</h3>
+                    <p style="margin: 20px 0; font-size: 1.1rem;">Espacio reservado para la entrega del proyecto final.</p>
+                    <div class="note">
+                        Fecha límite: por definir.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Hacemos que el menú lateral funcione (cambiar pestañas)
+            const menuItems = document.querySelectorAll('.sidebar li');
+            const panes = document.querySelectorAll('.tab-pane');
+
+            // Función para activar una pestaña
+            function activateTab(tabId) {
+                // Desactivar todos los paneles
+                panes.forEach(pane => {
+                    pane.classList.remove('active');
+                });
+                // Desactivar todos los items del menú
+                menuItems.forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                // Activar el panel correspondiente
+                const activePane = document.getElementById(tabId);
+                if (activePane) {
+                    activePane.classList.add('active');
+                }
+
+                // Activar el item del menú cuyo data-tab coincida con tabId
+                const activeMenuItem = Array.from(menuItems).find(
+                    item => item.getAttribute('data-tab') === tabId
+                );
+                if (activeMenuItem) {
+                    activeMenuItem.classList.add('active');
+                }
+            }
+
+            // Asignar evento click a cada item del menú
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    const tabId = this.getAttribute('data-tab');
+                    if (tabId) {
+                        activateTab(tabId);
+                    }
+                });
+            });
+
+            // Aseguramos que la pestaña inicial sea la clase 9 (por si acaso)
+            // ya tiene clase active en HTML, pero por si algo lo sobreescribe
+            const currentActive = document.querySelector('.sidebar li.active');
+            if (!currentActive) {
+                // si no hay ninguno activo, activamos el primero (clase 9)
+                activateTab('tab1');
+            }
+        })();
+    </script>
+
+    <!-- Pequeño detalle extra: forzar que la pestaña 1 se muestre bien y que el menú resalte -->
+    <!-- El script ya lo hace, pero por si acaso dejamos un respaldo -->
+    <noscript>
+        <style>.tab-pane { display: block !important; }</style>
+    </noscript>
+</body>
+</html>

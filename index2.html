@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entregas Curso BioPython</title>
+    <style>
+        /* === ESTILOS GENERALES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* === ENCABEZADO === */
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #1e2a36);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .header h2 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: #a8c9ff;
+            font-style: italic;
+        }
+
+        /* === CONTENEDOR PRINCIPAL (MENÚ + CONTENIDO) === */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* === MENÚ LATERAL IZQUIERDO === */
+        .sidebar {
+            width: 280px;
+            background-color: #2c3e50;
+            color: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            overflow-y: auto;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar li {
+            padding: 15px 25px;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar li i {
+            font-style: normal;
+            font-size: 1.2rem;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .sidebar li:hover {
+            background-color: #34495e;
+            border-left-color: #3498db;
+        }
+
+        .sidebar li.active {
+            background-color: #1e2a36;
+            border-left-color: #3498db;
+            font-weight: 500;
+        }
+
+        /* === ÁREA DE CONTENIDO DERECHO === */
+        .content {
+            flex: 1;
+            padding: 30px;
+            background-color: #f5f7fa;
+            overflow-y: auto;
+        }
+
+        .tab-pane {
+            display: none;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* === ESTILOS PARA EL CUADRO DE COMANDOS === */
+        .command-box {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            padding: 25px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .command-box h3 {
+            font-size: 1.6rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 400;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .command-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .command-item {
+            background-color: #f8fafd;
+            border: 1px solid #dde4ec;
+            border-radius: 8px;
+            padding: 15px 10px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #1e2a36;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .command-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.15);
+            border-color: #3498db;
+            background-color: #ebf5ff;
+        }
+
+        .command-item.special {
+            background-color: #e8f0fe;
+            border-left: 4px solid #3498db;
+        }
+
+        .note {
+            margin-top: 20px;
+            color: #5f6b7a;
+            font-size: 0.95rem;
+            background-color: #f0f4f9;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #f39c12;
+        }
+
+        .note code {
+            background-color: #e1e8ed;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #c0392b;
+        }
+
+        /* === ESTILOS PARA EL SUBMENÚ DE PDFs === */
+        .pdf-submenu {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .pdf-card {
+            background-color: #f8fafd;
+            border: 1px solid #dde4ec;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+
+        .pdf-card:hover {
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.1);
+            border-color: #3498db;
+        }
+
+        .pdf-card h4 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pdf-card h4 i {
+            font-style: normal;
+            font-size: 1.5rem;
+        }
+
+        .pdf-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .pdf-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background-color: white;
+            border: 1px solid #3498db;
+            border-radius: 6px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .pdf-link:hover {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .pdf-link.download {
+            background-color: #2c3e50;
+            border-color: #2c3e50;
+            color: white;
+        }
+
+        .pdf-link.download:hover {
+            background-color: #1e2a36;
+        }
+
+        .pdf-description {
+            margin-top: 15px;
+            color: #5f6b7a;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            padding-top: 15px;
+            border-top: 1px dashed #dde4ec;
+        }
+
+        .delivery-date {
+            display: inline-block;
+            background-color: #f39c12;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        /* === VISOR DE PDF === */
+        .pdf-viewer-container {
+            margin-top: 30px;
+            border: 1px solid #dde4ec;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+        }
+
+        .pdf-viewer-header {
+            background-color: #f0f4f9;
+            padding: 15px 20px;
+            border-bottom: 1px solid #dde4ec;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pdf-viewer-header h4 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-viewer {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #5f6b7a;
+            padding: 0 10px;
+        }
+
+        .close-viewer:hover {
+            color: #e74c3c;
+        }
+
+        .pdf-viewer {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        .pdf-placeholder {
+            padding: 40px;
+            text-align: center;
+            color: #5f6b7a;
+            background-color: #f8fafd;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 700px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                box-shadow: none;
+            }
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                padding: 10px;
+            }
+            .sidebar li {
+                flex: 1 0 auto;
+                justify-content: center;
+            }
+            .pdf-viewer {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>entregas curso de programación BioPython</h1>
+        <h2>Karen Dayana Ramirez</h2>
+    </div>
+
+    <div class="main-container">
+        <!-- Menú lateral izquierdo -->
+        <div class="sidebar">
+            <ul>
+                <li data-tab="tab1">
+                    <i>📘</i> clase 9
+                </li>
+                <li data-tab="tab2">
+                    <i>📗</i> clase 10 (próximamente)
+                </li>
+                <li data-tab="tab3">
+                    <i>📙</i> proyecto final
+                </li>
+                <li data-tab="tab4" class="active">
+                    <i>📅</i> Viernes 27 Feb 2026
+                </li>
+            </ul>
+        </div>
+
+        <!-- Área de contenido derecho -->
+        <div class="content">
+            <!-- Pestaña 1: clase 9 -->
+            <div id="tab1" class="tab-pane">
+                <div class="command-box">
+                    <h3>📋 Comandos hasta la fecha - Clase 9</h3>
+                    <div class="command-grid">
+                        <div class="command-item">print( )</div>
+                        <div class="command-item">print(f" ")</div>
+                        <div class="command-item">input( )</div>
+                        <div class="command-item">float( )</div>
+                        <div class="command-item">int( )</div>
+                        <div class="command-item">array( )</div>
+                        <div class="command-item">numpy</div>
+                        <div class="command-item">math</div>
+                        <div class="command-item">import</div>
+                        <div class="command-item">for</div>
+                        <!-- Versiones con punto y sin punto, como en el enunciado -->
+                        <div class="command-item">print(.)</div>
+                        <div class="command-item">print(f".")</div>
+                        <div class="command-item">input(.)</div>
+                        <div class="command-item">float(.)</div>
+                        <div class="command-item">int(.)</div>
+                        <div class="command-item">array(.)</div>
+                        <div class="command-item special">numpy (librería)</div>
+                        <div class="command-item special">math (módulo)</div>
+                        <div class="command-item special">import</div>
+                        <div class="command-item special">for (bucle)</div>
+                    </div>
+                    <div class="note">
+                        <strong>Nota:</strong> Los comandos con <code>.</code> indican marcador de posición (ej: <code>print(objeto)</code>). 
+                        Se han listado tanto con punto como sin punto para reforzar la sintaxis vista en clase. 
+                        La librería <strong>numpy</strong> y <strong>math</strong> requieren ser importadas con <strong>import</strong>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña 2: clase 10 (placeholder) -->
+            <div id="tab2" class="tab-pane">
+                <div class="command-box">
+                    <h3>📚 Clase 10 - Próximamente</h3>
+                    <p style="margin: 20px 0; font-size: 1.1rem;">Contenido en desarrollo para la siguiente clase.</p>
+                    <div class="note">
+                        <strong>BioPython:</strong> Módulos para biología computacional.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña 3: proyecto final (placeholder) -->
+            <div id="tab3" class="tab-pane">
+                <div class="command-box">
+                    <h3>🧬 Proyecto Final</h3>
+                    <p style="margin: 20px 0; font-size: 1.1rem;">Espacio reservado para la entrega del proyecto final.</p>
+                    <div class="note">
+                        Fecha límite: por definir.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña 4: Viernes 27 Feb 2026 - Entrega de PDFs -->
+            <div id="tab4" class="tab-pane active">
+                <div class="command-box">
+                    <div class="delivery-date">📅 Entrega: Viernes 27 de Febrero de 2026</div>
+                    <h3>📚 Artículos Académicos</h3>
+                    
+                    <div class="pdf-submenu">
+                        <!-- Artículo 1: Método de Po-Shen Loh -->
+                        <div class="pdf-card">
+                            <h4>
+                                <i>📐</i> Método de Po-Shen Loh para Ecuaciones Cuadráticas
+                            </h4>
+                            <div class="pdf-links">
+                                <button class="pdf-link" onclick="viewPDF('poshenloh')">
+                                    <span>👁️</span> Visualizar
+                                </button>
+                                <a href="data:application/pdf;base64,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wP4bYP8NsP8G2H8D7L8B9t8A+2+A/TfA/htg/w2w/wbYfwPsvwH23wD7b4D9N8D+G2D/DbD/Bth/A+y/AfbfAPtvgP03wP4bYP8NsP8G2H8D7L8B9t8A+2+A/TfA/htg/w2w/wbYfwPsvwH23wD7b4D9N8D+G2D/DbB/G9i/Dey/A+zfAfbvAPt3gP07wP4dYP8usH8X2L8L7N8F9u8C+3eB/bvA/l1g/y6wfxfYvwvs3wX27wL7d4H9u8D+XWD/LrB/F9i/C+zfBfbvAvt3gf27wP5dYP8usH8X2L8L7N8F9u8C+3eB/bvA/l1g/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w/y6w
